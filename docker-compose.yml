@@ -1,0 +1,40 @@
+version: '3'
+services:
+  math:
+    build: .
+    tty: true
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    ports:
+      - '8000:80'
+    environment:
+      - APP_ENV=dev_lms
+      - CONFIG_HOSTNAME=localhost
+      - CONFIG_DB_DSN=pgsql://postgres:postgres@postgres:5432/lms
+      - CONFIG_MAILER_DSN=smtp://mail.worldplaynetworks.com:25
+      - CONFIG_REDIS_DSN=tcp://redis:6379/1
+      - CONFIG_HASHID_CUSTOMER_SALT=hashid_customer_salt
+      - CONFIG_HASHID_ACCOUNT_SALT=hashid_account_salt
+      - CONFIG_UID_LENGTH=3
+      - CONFIG_TEST_MODE=true
+      - CONFIG_LOGGER_MAX_LEVEL=info
+      - CONFIG_ARCHIVE_DATA_STORAGE=/var/log/cc
+    depends_on:
+      - redis
+      - postgres
+  redis:
+    image: "registry.wpninc.com/library/redis:5.0.14"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+  postgres:
+      image: postgres:14.7
+      ports:
+        - 5432:5432
+      volumes:
+        - ${HOME}/postgres_database_lms147:/var/lib/postgresql/data # image uses /var/lib/postgresql/data inside, don't rename it
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=postgres
+        - POSTGRES_HOST_AUTH_METHOD=trust
