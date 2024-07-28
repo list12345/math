@@ -4,20 +4,19 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\CatalogCategory $model */
+/** @var app\models\Classroom $model */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Catalog Categories', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Classrooms', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="catalog-category-view">
+<div class="classroom-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Items', ['/backend/catalog-item/index', 'catalog_category_id' => $model->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -31,11 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'parent_id',
-            'order_id',
             'name',
-            'state',
+            'order_id',
             'description:ntext',
+            'state',
             'created_at',
             'updated_at',
             'data',

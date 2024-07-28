@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\CatalogCategory $model */
+/** @var app\models\Classroom $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'order_id')->textInput() ?>
 
-    <?= $form->field($model, 'state')->textInput() ?>
+    <?= $form->field($model, 'state')->dropDownList($model->getStateList(), []); ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 

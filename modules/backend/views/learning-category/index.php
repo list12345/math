@@ -1,31 +1,27 @@
 <?php
 
+use app\models\LearningCategory;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\CatalogCategorySearch $searchModel */
+/** @var app\models\LearningCategorySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var app\models\CatalogCategory $parent_model */
 
-$this->title = 'Catalog Categories';
-$this->params['breadcrumbs'][] = [
-    'label' => 'Parent Catalog Categories',
-    'url' => [
-        'index',
-        'parent_id' => $parent_model instanceof \app\models\CatalogCategory ? $parent_model->parent_id : null
-    ]
-];
+$this->title = 'Learning Categories';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
-<div class="catalog-category-index">
+<div class="learning-category-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Catalog Category', [
+        <?= Html::a('Create Learning Category', [
             'create',
-            'parent_id' => $searchModel->parent_id
+            'classroom_id' => $searchModel->classroom_id,
         ], ['class' => 'btn btn-primary btn-sm']) ?>
     </p>
 
@@ -46,14 +42,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['width' => '20%'],
                 'filter' => $searchModel->getStateList(),
                 'value' => function ($data) {
-                    /* @var $data \app\models\CatalogCategory */
+                    /* @var $data \app\models\LearningCategory */
                     return $data->getStateName($data->state);
                 },
             ],
             [
                 'class' => \yii\grid\ActionColumn::class,
                 'header' => 'Actions',
-                'template' => '{category} {item} {update}',
+                'template' => '{item} {update} {delete}',
                 'contentOptions' => ['width' => '10%'],
                 'buttons' => [
                     'category' => function ($url, $model, $key) {
@@ -88,18 +84,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 'urlCreator' => function ($action, $model, $key, $index) {
-                    /** @var $model \app\models\CatalogCategory */
-                    if ($action === 'category') {
-                        return ['catalog-category/index/', 'parent_id' => $key];
-                    }
+                    /** @var $model LearningCategory */
                     if ($action === 'item') {
-                        return ['catalog-item/index/', 'catalog_category_id' => $key];
+                        return ['learning-item/index/', 'learning_category_id' => $key];
                     }
 
                     return [
                         $action,
                         'id' => $key,
-                        'parent_id' => $model->parent_id,
+                        'classroom_id' => $model->classroom_id,
                     ];
                 },
             ],

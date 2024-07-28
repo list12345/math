@@ -4,20 +4,21 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\CatalogItem $model */
+/** @var app\models\LearningCategory $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="catalog-item-form">
+<div class="learning-category-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->errorSummary($model); ?>
-
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'order_id')->textInput() ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 10]) ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+
+    <?= $form->field($model, 'state')->dropDownList($model->getStateList(), []); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -3,42 +3,37 @@
 namespace app\models;
 
 use app\models\classes\behaviors\TimestampBehavior;
+use app\models\classes\State;
 use app\models\classes\StateTrait;
 use Yii;
-use Yii2App\Classes\State;
 
 /**
- * This is the model class for table "catalog_item".
+ * This is the model class for table "learning_item".
  *
  * @property int $id
  * @property string $code
  * @property string $name
  * @property string $type
- * @property int $catalog_category_id
  * @property int $order_id
  * @property string|null $description
+ * @property int $learning_category_id
  * @property int $state
  * @property string $created_at
  * @property string|null $updated_at
  * @property string|null $data
  *
- * @property CatalogCategory $catalogCategory
+ * @property LearningCategory $learningCategory
  */
-class CatalogItem extends \yii\db\ActiveRecord
+class LearningItem extends \yii\db\ActiveRecord
 {
     use StateTrait;
-
-    /** @const */
-    public const STATE_DISABLED = 0;
-    /** @const */
-    public const STATE_ENABLED = 1;
 
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%catalog_item}}';
+        return '{{learning_item}}';
     }
 
     /**
@@ -47,23 +42,22 @@ class CatalogItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'name', 'type', 'catalog_category_id',], 'filter', 'filter' => 'trim', 'skipOnArray' => true],
-            [['code', 'name', 'type', 'catalog_category_id', 'created_at', 'order_id',], 'required'],
-            [['catalog_category_id'], 'default', 'value' => null],
-            [['catalog_category_id'], 'integer'],
+            [['code', 'name', 'type', 'learning_category_id',], 'filter', 'filter' => 'trim', 'skipOnArray' => true, 'skipOnEmpty' => true],
+            [['code', 'name', 'type', 'order_id', 'learning_category_id', 'created_at'], 'required'],
+            [['order_id', 'learning_category_id',], 'default', 'value' => null],
+            [['state'], 'default', 'value' => State::DISABLED],
+            [['state'], 'in', 'range' => [State::DISABLED, State::ENABLED]],
+            [['order_id', 'learning_category_id', 'state'], 'integer'],
             [['description'], 'string'],
-            [['state'], 'default', 'value' => self::STATE_ENABLED],
-            [['order_id', 'state'], 'integer'],
-            [['state'], 'in', 'range' => [self::STATE_DISABLED, self::STATE_ENABLED]],
             [['created_at', 'updated_at', 'data'], 'safe'],
             [['code', 'name', 'type'], 'string', 'max' => 64],
             [['code'], 'unique'],
             [
-                ['catalog_category_id'],
+                ['learning_category_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => CatalogCategory::class,
-                'targetAttribute' => ['catalog_category_id' => 'id']
+                'targetClass' => LearningCategory::class,
+                'targetAttribute' => ['learning_category_id' => 'id']
             ],
         ];
     }
@@ -88,7 +82,10 @@ class CatalogItem extends \yii\db\ActiveRecord
             'code' => 'Code',
             'name' => 'Name',
             'type' => 'Type',
-            'catalog_category_id' => 'Catalog Category ID',
+            'order_id' => 'Order ID',
+            'description' => 'Description',
+            'learning_category_id' => 'Learning Category ID',
+            'state' => 'State',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'data' => 'Data',
@@ -96,13 +93,13 @@ class CatalogItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[CatalogCategory]].
+     * Gets query for [[LearningCategory]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCatalogCategory()
+    public function getLearningCategory()
     {
-        return $this->hasOne(CatalogCategory::class, ['id' => 'catalog_category_id']);
+        return $this->hasOne(LearningCategory::class, ['id' => 'learning_category_id']);
     }
 
     /**

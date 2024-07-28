@@ -1,66 +1,78 @@
 <?php
 
-namespace app\modules\backend\controllers;
+namespace app\modules\frontend\controllers;
 
 use app\models\CatalogCategory;
-use app\models\CatalogCategorySearch;
+use app\models\CatalogItem;
 use Yii;
 use yii\db\Exception;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CatalogCategoryController implements the CRUD actions for CatalogCategory model.
+ * CatalogController implements the CRUD actions for CatalogItem model.
  */
-class CatalogCategoryController extends Controller
+class LearningController extends Controller
 {
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => [
-                            'create',
-                        ],
-                        'allow' => true,
-                        'roles' => ['admin'],
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::class,
+                    'actions' => [
+                        'delete' => ['POST'],
                     ],
                 ],
-            ],
-        ];
+            ]
+        );
     }
 
     /**
-     * Lists all CatalogCategory models.
+     * Lists all CatalogItem models.
      *
      * @return string
-     * @throws NotFoundHttpException
      */
     public function actionIndex()
     {
-        $searchModel = new CatalogCategorySearch();
-        $parent_model =  Yii::$app->request->get('parent_id') ? $this->findModel(Yii::$app->request->get('parent_id')) : null;
+        $categories = CatalogCategory::find()->where(['state' => 1])->orderBy(['level' => SORT_DESC, 'order_id' => SORT_ASC])->all();
+        $menu = [];
+        $root_id =1;
+        foreach ($categories as $category) {
+            /** @var CatalogCategory $category */
+            if ($category->parent_id != null) {
+                if(empty($menu['c-' . $category->id])) {
+                    if ($category->level > 1) {
+                        $menu['c-' . $category->parent_id][$category->order_id] =   ['label' => $category->name, 'url' => ['catalog/index', 'id' => $category->id]];
+                    } else {
+                        $menu[$category->order_id] =   ['label' => $category->name, 'url' => ['catalog/index', 'id' => $category->id]];
+                    }
+                } else {
+                    if ($category->level > 1) {
+                        $menu['c-' . $category->parent_id][$category->order_id] =  ['label' => $category->name, 'items' => $menu['c-' . $category->id], 'linkOptions' => [
+                            'class' => 'nav-link',
+                        ]];
+                    } else {
+                        $menu[$category->order_id] =  ['label' => $category->name, 'items' => $menu['c-' . $category->id]];
+                    }
+                    unset($menu['c-' . $category->id]);
+                }
+            }
+        }
 
-        $searchModel->parent_id = Yii::$app->request->get('parent_id');
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'parent_model' => $parent_model,
-        ]);
+        return $this->render('index', ['menu' => $menu]);
     }
 
     /**
-     * Displays a single CatalogCategory model.
+     * Displays a single CatalogItem model.
+     *
      * @param int $id ID
+     *
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -72,15 +84,15 @@ class CatalogCategoryController extends Controller
     }
 
     /**
-     * Creates a new CatalogCategory model.
+     * Creates a new CatalogItem model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      * @throws Exception
      */
     public function actionCreate()
     {
-        $model = new CatalogCategory();
-        $model->parent_id = Yii::$app->request->get('parent_id');
+        $model = new CatalogItem();
+        $model->catalog_category_id = Yii::$app->request->get('catalog_category_id');
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -95,9 +107,11 @@ class CatalogCategoryController extends Controller
     }
 
     /**
-     * Updates an existing CatalogCategory model.
+     * Updates an existing CatalogItem model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param int $id ID
+     *
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -115,30 +129,33 @@ class CatalogCategoryController extends Controller
     }
 
     /**
-     * Deletes an existing CatalogCategory model.
+     * Deletes an existing CatalogItem model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param int $id ID
+     *
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        // todo: delete all categories under it
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the CatalogCategory model based on its primary key value.
+     * Finds the CatalogItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
-     * @return CatalogCategory the loaded model
+     *
+     * @return CatalogItem the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = CatalogCategory::findOne(['id' => $id])) !== null) {
+        if (($model = CatalogItem::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

@@ -2,14 +2,14 @@
 
 namespace app\models;
 
+use app\models\Classroom;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\CatalogItem;
 
 /**
- * CatalogItemSearch represents the model behind the search form of `app\models\CatalogItem`.
+ * ClassroomSearch represents the model behind the search form of `app\models\Classroom`.
  */
-class CatalogItemSearch extends CatalogItem
+class ClassroomSearch extends Classroom
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class CatalogItemSearch extends CatalogItem
     public function rules()
     {
         return [
-            [['id', 'catalog_category_id'], 'integer'],
-            [['code', 'name', 'type', 'created_at', 'updated_at', 'data'], 'safe'],
+            [['id', 'order_id', 'state'], 'integer'],
+            [['name', 'description', 'created_at', 'updated_at', 'data'], 'safe'],
         ];
     }
 
@@ -28,7 +28,7 @@ class CatalogItemSearch extends CatalogItem
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-        return array_merge(Model::scenarios(), ['search' => array_keys($this->getAttributes())]);
+        return Model::scenarios();
     }
 
     /**
@@ -40,16 +40,16 @@ class CatalogItemSearch extends CatalogItem
      */
     public function search($params)
     {
-        $query = CatalogItem::find();
+        $query = Classroom::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_ASC]],
         ]);
 
         $this->load($params);
-        $this->setScenario('search');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -60,12 +60,11 @@ class CatalogItemSearch extends CatalogItem
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'catalog_category_id' => $this->catalog_category_id,
+            'order_id' => $this->order_id,
+            'state' => $this->state,
         ]);
 
-        $query->andFilterWhere(['ilike', 'code', $this->code])
-            ->andFilterWhere(['ilike', 'name', $this->name])
-            ->andFilterWhere(['ilike', 'type', $this->type]);
+        $query->andFilterWhere(['ilike', 'name', $this->name]);
 
         return $dataProvider;
     }

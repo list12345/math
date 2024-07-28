@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\CatalogItemSearch $model */
+/** @var app\models\LearningItemSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="catalog-item-search">
+<div class="learning-item-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -22,6 +22,20 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name') ?>
 
     <?= $form->field($model, 'type') ?>
+
+    <?= $form->field($model, 'order_id') ?>
+
+    <?php // echo $form->field($model, 'description') ?>
+
+    <?php // echo $form->field($model, 'learning_category_id') ?>
+
+    <?php // echo $form->field($model, 'state') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
+
+    <?php // echo $form->field($model, 'data') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

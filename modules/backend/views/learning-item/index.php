@@ -1,24 +1,27 @@
 <?php
 
-use app\models\CatalogItem;
+use app\models\LearningItem;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\CatalogItemSearch $searchModel */
+/** @var app\models\LearningItemSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Catalog Items';
+$this->title = 'Learning Items';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="catalog-item-index">
+<div class="learning-item-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Catalog Item', ['create', 'catalog_category_id' => $searchModel->catalog_category_id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Learning Item', [
+            'create',
+            'learning_category_id' => $searchModel->learning_category_id,
+        ], ['class' => 'btn btn-primary btn-sm']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -33,7 +36,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'code',
             'name',
-            'type',
             [
                 'attribute' => 'order_id',
                 'contentOptions' => ['width' => '10%'],
@@ -43,16 +45,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['width' => '20%'],
                 'filter' => $searchModel->getStateList(),
                 'value' => function ($data) {
-                    /* @var $data \app\models\CatalogCategory */
+                    /* @var $data \app\models\LearningCategory */
                     return $data->getStateName($data->state);
                 },
             ],
             [
                 'class' => ActionColumn::class,
                 'contentOptions' => ['width' => '10%'],
-                'urlCreator' => function ($action, CatalogItem $model, $key, $index, $column) {
+                'urlCreator' => function ($action, LearningItem $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>

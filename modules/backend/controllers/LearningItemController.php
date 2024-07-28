@@ -2,8 +2,8 @@
 
 namespace app\modules\backend\controllers;
 
-use app\models\CatalogItem;
-use app\models\CatalogItemSearch;
+use app\models\LearningItem;
+use app\models\LearningItemSearch;
 use Yii;
 use yii\db\Exception;
 use yii\filters\AccessControl;
@@ -12,9 +12,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CatalogItemController implements the CRUD actions for CatalogItem model.
+ * LearningItemController implements the CRUD actions for LearningItem model.
  */
-class CatalogItemController extends Controller
+class LearningItemController extends Controller
 {
     /**
      * @inheritDoc
@@ -28,6 +28,10 @@ class CatalogItemController extends Controller
                     [
                         'actions' => [
                             'create',
+                            'index',
+                            'view',
+                            'delete',
+                            'update',
                         ],
                         'allow' => true,
                         'roles' => ['admin'],
@@ -38,14 +42,14 @@ class CatalogItemController extends Controller
     }
 
     /**
-     * Lists all CatalogItem models.
+     * Lists all LearningItem models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new CatalogItemSearch();
-        $searchModel->catalog_category_id = Yii::$app->request->get('catalog_category_id');
+        $searchModel = new LearningItemSearch();
+        $searchModel->learning_category_id = Yii::$app->request->get('learning_category_id');
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -55,7 +59,7 @@ class CatalogItemController extends Controller
     }
 
     /**
-     * Displays a single CatalogItem model.
+     * Displays a single LearningItem model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -68,15 +72,15 @@ class CatalogItemController extends Controller
     }
 
     /**
-     * Creates a new CatalogItem model.
+     * Creates a new LearningItem model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      * @throws Exception
      */
     public function actionCreate()
     {
-        $model = new CatalogItem();
-        $model->catalog_category_id = Yii::$app->request->get('catalog_category_id');
+        $model = new LearningItem();
+        $model->learning_category_id = Yii::$app->request->get('learning_category_id');
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -90,11 +94,13 @@ class CatalogItemController extends Controller
     }
 
     /**
-     * Updates an existing CatalogItem model.
+     * Updates an existing LearningItem model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param int $id ID
+     *
      * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws NotFoundHttpException|Exception|Exception if the model cannot be found*@throws Exception
      */
     public function actionUpdate($id)
     {
@@ -110,7 +116,7 @@ class CatalogItemController extends Controller
     }
 
     /**
-     * Deletes an existing CatalogItem model.
+     * Deletes an existing LearningItem model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -124,15 +130,15 @@ class CatalogItemController extends Controller
     }
 
     /**
-     * Finds the CatalogItem model based on its primary key value.
+     * Finds the LearningItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return CatalogItem the loaded model
+     * @return LearningItem the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = CatalogItem::findOne(['id' => $id])) !== null) {
+        if (($model = LearningItem::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

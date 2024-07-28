@@ -1,13 +1,13 @@
 
 ## Create Migration
 
-### Go to cc root folder and run command:
+### Go to root folder and run command:
 * php src/yii migrate/create {migration name}
 
 - `Create new migration '{migration path}'? (yes|no) [no]:yes`
 
 ## Apply Migration
-### Go to cc root folder and run command:
+### Go to root folder and run command:
 
 * php src/yii migrate/up --interactive=0
 
